@@ -23,8 +23,12 @@ Features->
 Getting Started->
 *****Installation******
 
-1. Clone the Repository ->  git clone URL ().
-2. Install Dependencies -> npm install
-3. cd Database -> npm install 
-4. 
+1. Clone the Repository ->  git clone URL (https://github.com/akshaybabre/Intern_Task.git).
+2. Install Dependencies -> cd Zyon_Intern_Task -> npm install
+3. cd Zyon_Intern_Task -> cd Database -> npm install 
+
+*****Run The Project*****
+1. cd Zyon_Intern_Task -> cd Database -> npm run server
+2. cd Zyon_Intern_Task -> npm run dev
+
 
