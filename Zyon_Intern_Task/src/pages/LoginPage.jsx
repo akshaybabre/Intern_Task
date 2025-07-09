@@ -27,53 +27,34 @@ export default function LoginPage() {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
+      console.log('Google Sign-In User Details:', {
+        name: user.displayName,
+        email: user.email,
+        uid: user.uid
+      });
 
-      const res = await fetch(`http://localhost:5000/admins?email=${user.email}`);
-      const data = await res.json();
-
-      if (data.length > 0) {
-        localStorage.setItem('Admin Name', user.displayName || 'Admin');
-        navigate('/dashboard');
-      } else {
-        await fetch('http://localhost:5000/admins', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: user.displayName || 'Admin',
-            email: user.email,
-            mobile: '',
-            password: ''
-          })
-        });
-        localStorage.setItem('Admin Name', user.displayName || 'Admin');
-        navigate('/dashboard');
-      }
+      localStorage.setItem('Admin Name', user.displayName || user.email || 'Admin');
+      navigate('/dashboard');
     } catch (error) {
+      console.error('Google Sign-In error:', error.message);
       alert('Failed to sign in with Google: ' + error.message);
     }
   };
 
   const handleSubmit = async (values, { setSubmitting, setErrors }) => {
-    try {
-      const res = await fetch(`http://localhost:5000/admins?email=${values.email}&password=${values.password}`);
-      const data = await res.json();
+    console.log('Manual Login User Details:', {
+      email: values.email,
+      password: values.password // Note: Password should not be logged in production
+    });
 
-      if (data.length > 0) {
-        localStorage.setItem('Admin Name', data[0].name);
-        navigate('/dashboard');
-      } else {
-        setErrors({ password: 'Invalid email or password' });
-      }
-    } catch (error) {
-      setErrors({ password: 'An error occurred during login' });
-    } finally {
-      setSubmitting(false);
-    }
+    localStorage.setItem('Admin Name', values.email);
+    navigate('/dashboard');
+    setSubmitting(false);
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4 py-8">
-      <div ref={formRef} className="Arpit max-w-md w-full">
+      <div ref={formRef} className="login-form max-w-md w-full">
         <div className="bg-white rounded-xl shadow-md px-6 py-8 space-y-4">
           <div>
             <Link to="/" className="inline-flex items-center text-sm text-gray-600 hover:text-blue-600">
@@ -118,10 +99,11 @@ export default function LoginPage() {
                         name={name}
                         type={type}
                         placeholder={placeholder}
-                        className={`w-full pl-10 pr-3 py-2 rounded-md border text-sm outline-none transition ${touched[name] && errors[name]
+                        className={`w-full pl-10 pr-3 py-2 rounded-md border text-sm outline-none transition ${
+                          touched[name] && errors[name]
                             ? 'border-red-500 bg-red-50'
                             : 'border-gray-300 hover:border-gray-400'
-                          }`}
+                        }`}
                       />
                     </div>
                     <ErrorMessage name={name} component="div" className="text-red-500 text-xs mt-1" />

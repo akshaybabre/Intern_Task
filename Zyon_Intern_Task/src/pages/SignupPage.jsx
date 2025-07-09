@@ -4,7 +4,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { gsap } from 'gsap';
 import { Shield, Mail, Lock, Chrome, ArrowLeft, User, Phone } from 'lucide-react';
-import { auth, googleProvider } from '../firebase'; // Import Firebase
+import { auth, googleProvider } from '../firebase';
 import { signInWithPopup } from 'firebase/auth';
 
 const SignupSchema = Yup.object().shape({
@@ -30,48 +30,30 @@ export default function SignupPage() {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
-      console.log('Google Sign-In successful:', user);
-
-      localStorage.setItem('Admin Name', user.displayName || 'Admin');
-
-      await fetch('http://localhost:5000/admins', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: user.displayName,
-          email: user.email
-        })
+      console.log('Google Sign-In User Details:', {
+        name: user.displayName,
+        email: user.email,
+        uid: user.uid
       });
 
+      localStorage.setItem('Admin Name', user.displayName || 'Admin');
       navigate('/dashboard');
     } catch (error) {
       console.error('Google Sign-In error:', error.message);
+      alert('Failed to sign in with Google: ' + error.message);
     }
   };
 
   const handleSubmit = async (values) => {
-    try {
-      const response = await fetch('http://localhost:5000/admins', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: values.fullName,
-          email: values.email,
-          mobile: values.mobile,
-          password: values.password
-        })
-      });
+    console.log('Manual Signup User Details:', {
+      name: values.fullName,
+      email: values.email,
+      mobile: values.mobile,
+      password: values.password 
+    });
 
-      if (!response.ok) {
-        throw new Error('Failed to store admin data');
-      }
-
-      console.log('Admin name saved!');
-      localStorage.setItem('Admin Name', values.fullName);
-      navigate('/dashboard');
-    } catch (error) {
-      console.error('Error saving admin:', error.message);
-    }
+    localStorage.setItem('Admin Name', values.fullName);
+    navigate('/dashboard');
   };
 
   return (
@@ -123,7 +105,7 @@ export default function SignupPage() {
                 ].map(({ name, icon: Icon, type, placeholder }) => (
                   <div key={name}>
                     <div className="relative">
-                      <Icon className="absolute left-3 top-2.5 h-4 w-карп w-4 text-gray-400" />
+                      <Icon className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                       <Field
                         name={name}
                         type={type}
