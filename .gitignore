@@ -1,6 +1,5 @@
 # Dependency directories
-Zyon_Intern_Task/node_modules
-Zyon_Intern_Task/Database/node_modules  
+Zyon_Intern_Task/node_modules 
 
 # Build directories
 dist
